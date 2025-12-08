@@ -50,7 +50,7 @@ export default function Hero() {
           <motion.h1
             initial="hidden"
             animate="show"
-            variants={heading}
+            
             className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight"
           >
             Transform Your{" "}
