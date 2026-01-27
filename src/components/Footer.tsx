@@ -43,12 +43,15 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-gray-400">
                 <Mail className="w-4 h-4 text-gold" />
-                info@reholife.com
+                reholife@gmail.com
               </li>
               <li className="flex items-center gap-2 text-gray-400">
                 <Phone className="w-4 h-4 text-gold" />
-                +1 (555) 123-4567
+                <a href="tel:+918807552013" className="hover:text-gold">
+                  +91-88075 52013
+                </a>
               </li>
+
               <li className="flex items-center gap-2 text-gray-400">
                 <MapPin className="w-4 h-4 text-gold" />
                 Leadership Training Center
