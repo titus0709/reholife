@@ -54,7 +54,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export const revalidate = 60;
+
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
   const data = await fetchGraphQL<PostData>(GET_POST_BY_SLUG, {
@@ -146,5 +146,6 @@ export default async function PostPage({ params }: { params: { slug: string } })
     </article>
   );
 }
+
 
 
