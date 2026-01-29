@@ -6,6 +6,8 @@ import Link from "next/link";
 import RelatedPosts from "@/components/RelatedPosts";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
 
 interface CategoryNode {
   name: string;
@@ -144,4 +146,5 @@ export default async function PostPage({ params }: { params: { slug: string } })
     </article>
   );
 }
+
 
