@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,11 +22,18 @@ interface Post {
 
 export default function SearchClient() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+
   const query = searchParams.get("q") || "";
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState(query);
+
+  // Keep input in sync with URL
+  useEffect(() => {
+    setSearchTerm(query);
+  }, [query]);
 
   const handleSearch = async (term: string) => {
     if (!term.trim()) {
@@ -35,24 +42,35 @@ export default function SearchClient() {
     }
 
     setLoading(true);
+
     try {
-      const response = await fetch("/api/search", {
+      const res = await fetch("/api/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ search: term }),
       });
 
-      const data = await response.json();
-      setPosts(data.posts.nodes);
+      if (!res.ok) {
+        throw new Error("Search request failed");
+      }
+
+      const data = await res.json();
+      setPosts(data?.posts?.nodes || []);
     } catch (error) {
       console.error("Search error:", error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Run search when URL query changes
   useEffect(() => {
-    if (query) handleSearch(query);
+    if (query) {
+      handleSearch(query);
+    } else {
+      setPosts([]);
+    }
   }, [query]);
 
   return (
@@ -62,8 +80,7 @@ export default function SearchClient() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          window.history.pushState({}, "", `/blog/search?q=${searchTerm}`);
-          handleSearch(searchTerm);
+          router.push(`/blog/search?q=${encodeURIComponent(searchTerm)}`);
         }}
         className="mb-8"
       >
@@ -84,7 +101,9 @@ export default function SearchClient() {
         </div>
       </form>
 
-      {loading && <p className="text-center text-gray-600">Searching...</p>}
+      {loading && (
+        <p className="text-center text-gray-600">Searching…</p>
+      )}
 
       {!loading && query && posts.length === 0 && (
         <p className="text-center text-gray-600">
@@ -100,7 +119,7 @@ export default function SearchClient() {
               className="border rounded-lg p-6 hover:shadow-lg transition flex gap-6"
             >
               {post.featuredImage && (
-                <Link href={`/blog/${post.slug}`}>
+                <Link href={`/blog/${post.slug}`} className="flex-shrink-0">
                   <Image
                     src={post.featuredImage.node.sourceUrl}
                     alt={post.featuredImage.node.altText || post.title}
@@ -111,7 +130,7 @@ export default function SearchClient() {
                 </Link>
               )}
 
-              <div>
+              <div className="flex-1">
                 <Link href={`/blog/${post.slug}`}>
                   <h2 className="text-2xl font-semibold hover:text-blue-600">
                     {post.title}
