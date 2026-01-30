@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+export const dynamic = "force-dynamic";
+
 
 interface Post {
   id: string;
@@ -153,3 +155,4 @@ export default function SearchClient() {
     </div>
   );
 }
+
